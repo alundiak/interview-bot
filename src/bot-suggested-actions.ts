@@ -1,5 +1,11 @@
+// MAYBE use QnA Maker?
+// https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-qna?view=azure-bot-service-4.0&tabs=cs
+
+// Below code
 // taken from https://github.com/Microsoft/BotBuilder-Samples/blob/master/samples/javascript_nodejs/08.suggested-actions/bot.js
 const { ActivityTypes, MessageFactory } = require('botbuilder');
+
+// const { quizData } = require('./quiz-data');
 
 /**
  * A bot that responds to input from suggested actions.
@@ -12,19 +18,24 @@ export class SuggestedActionsBot {
      * @param {TurnContext} turnContext A TurnContext instance containing all the data needed for processing this conversation turn.
      */
     async onTurn(turnContext) {
+      //
+      // https://github.com/Microsoft/BotBuilder-Samples/blob/master/samples/javascript_nodejs/51.cafe-bot/bot.js
+      // SWICTH example
+
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         if (turnContext.activity.type === ActivityTypes.Message) {
             const text = turnContext.activity.text;
-
-            // Create an array with the valid color options.
             const validColors = ['Red', 'Blue', 'Yellow'];
 
-            // If the `text` is in the Array, a valid color was selected and send agreement.
-            // if (validColors.includes(text)) { // TODO - doesn't work with TypeScript / tslint /eslint ???
-            if (validColors.indexOf(text) > -1) {
-                await turnContext.sendActivity(`I agree, ${ text } is the best color.`);
+            if (text) {
+              // if (validColors.includes(text)) { // TODO - doesn't work with TypeScript / tslint /eslint ???
+              if (validColors.indexOf(text) > -1){
+                await turnContext.sendActivity(`Great, ${ text } is the correct answer.`);
+              } else {
+                await turnContext.sendActivity(`Oops. ${ text } is wrong answer`);
+              }
             } else {
-                await turnContext.sendActivity('Please select a color.');
+              await turnContext.sendActivity('Please provide an answer.');
             }
 
             // After the bot has responded send the suggested actions.
@@ -46,11 +57,11 @@ export class SuggestedActionsBot {
             // Iterate over all new members added to the conversation.
             for (const idx in activity.membersAdded) {
                 if (activity.membersAdded[idx].id !== activity.recipient.id) {
-                    const welcomeMessage = `Welcome to suggestedActionsBot ${ activity.membersAdded[idx].name }. ` +
-                        `This bot will introduce you to Suggested Actions. ` +
+                    const welcomeMessage = `Hello, ${ activity.membersAdded[idx].name }. ` +
+                        `This is InterviewBot - a Quiz-like bot. ` +
                         `Please select an option:`;
                     await turnContext.sendActivity(welcomeMessage);
-                    await this.sendSuggestedActions(turnContext);
+                    await this.sendSuggestedActions(turnContext); // Rework into "Start a ${type} quiz"
                 }
             }
         }
@@ -61,7 +72,12 @@ export class SuggestedActionsBot {
      * @param {TurnContext} turnContext A TurnContext instance containing all the data needed for processing this conversation turn.
      */
     async sendSuggestedActions(turnContext) {
-        var reply = MessageFactory.suggestedActions(['Red', 'Yellow', 'Blue'], 'What is the best color?');
+        var reply = MessageFactory.suggestedActions(['Red', 'Yellow', 'Blue'], 'Question 1');
         await turnContext.sendActivity(reply);
     }
+
+    // Welcome Cafe Bot example
+    // https://github.com/Microsoft/BotBuilder-Samples/blob/master/samples/javascript_nodejs/51.cafe-bot/bot.js
+    // or here:
+    // https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-send-welcome-message?view=azure-bot-service-4.0&tabs=js%2Ccsharpmulti%2Ccsharpwelcomeback
 }
