@@ -1,7 +1,7 @@
 import * as restify from 'restify';
 import * as path from 'path';
 import { config } from 'dotenv';
-import { BotFrameworkAdapter, MemoryStorage, ConversationState } from 'botbuilder';
+import { BotFrameworkAdapter, MemoryStorage, ConversationState, UserState } from 'botbuilder';
 import { BotConfiguration, IEndpointService } from 'botframework-config';
 // import { MyBot } from './bot';
 import { SuggestedActionsBot } from './bot-suggested-actions';
@@ -30,12 +30,12 @@ try {
 }
 
 const endpointConfig = <IEndpointService>botConfig.findServiceByNameOrId(BOT_CONFIGURATION);
-const a = {
+const adapterConfig = {
     appId: endpointConfig.appId || process.env.microsoftAppID,
     appPassword: endpointConfig.appPassword || process.env.microsoftAppPassword
 };
-console.log(a);
-const adapter = new BotFrameworkAdapter(a);
+// console.log(a);
+const adapter = new BotFrameworkAdapter(adapterConfig);
 
 const memoryStorage = new MemoryStorage();
 // CAUTION: You must ensure your product environment has the NODE_ENV set
@@ -54,9 +54,10 @@ const memoryStorage = new MemoryStorage();
 // conversationState = new ConversationState(blobStorage);
 
 const conversationState = new ConversationState(memoryStorage);
+const userState = new UserState(memoryStorage);
 
 // const myBot = new MyBot(conversationState);
-const myBot = new SuggestedActionsBot();
+const myBot = new SuggestedActionsBot(conversationState, userState);
 
 adapter.onTurnError = async (context, error) => {
     console.error(`\n [onTurnError]: ${error}`);

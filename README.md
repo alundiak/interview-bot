@@ -42,3 +42,6 @@ Bot will provide a quiz with questions. Interview Person should provide `type` o
 - Easy: Bot logic can be hosted in either local network as available host, or dedicated computer or any public free host. Not much of efforts needed, it's just quiz-like behavior.
 - Complex: Bot can be hosted on Heroku, but some delays can be in responses, then we need to use Cafeinne app, which will cause Heroku later on to suspend Heroku account.
 - Complicated: Bot can be hosted od MS dedicated Azure service. But it can be paid with time.
+
+## Other
+- https://telegram.org/blog/bot-revolution
