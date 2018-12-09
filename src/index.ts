@@ -4,7 +4,9 @@ import { config } from 'dotenv';
 import { BotFrameworkAdapter, MemoryStorage, ConversationState, UserState } from 'botbuilder';
 import { BotConfiguration, IEndpointService } from 'botframework-config';
 // import { MyBot } from './bot';
-import { SuggestedActionsBot } from './bot-suggested-actions';
+// import { SuggestedActionsBot } from './bot-suggested-actions';
+import { MyBot } from './bot-complex-dialog';
+// import { MyBot } from './bot-multi-prompt';
 const ENV_FILE = path.join(__dirname, '..', '.env');
 const env = config({ path: ENV_FILE });
 const DEV_ENVIRONMENT = 'development';
@@ -57,7 +59,8 @@ const conversationState = new ConversationState(memoryStorage);
 const userState = new UserState(memoryStorage);
 
 // const myBot = new MyBot(conversationState);
-const myBot = new SuggestedActionsBot(conversationState, userState);
+// const myBot = new SuggestedActionsBot(conversationState, userState);
+const myBot = new MyBot(conversationState, userState);
 
 adapter.onTurnError = async (context, error) => {
     console.error(`\n [onTurnError]: ${error}`);

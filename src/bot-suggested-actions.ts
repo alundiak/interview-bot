@@ -83,8 +83,8 @@ export class SuggestedActionsBot {
 
                     if (conversationData.promptedForQuizType) {
                         userProfile.quizType = turnContext.activity.text; // Assuming, user will answer for Suggested Actions.
-                        await turnContext.sendActivity(`'${userProfile.quizType}' selected. Now questions...`);
-                        conversationData.promptedForQuizType = false;
+                        // await turnContext.sendActivity(`'${userProfile.quizType}' selected. Now questions...`);
+                        // conversationData.promptedForQuizType = false;
 
                         // if we have name, and quizType (userProfile.quizType), we start a quiz.
                         await this.startQuiz(turnContext, userProfile);
@@ -148,7 +148,7 @@ export class SuggestedActionsBot {
 
     async sendSuggestedQuizTypes(turnContext) {
         const reply = MessageFactory.suggestedActions(['js', 'react'], 'Please select quiz type?');
-        await turnContext.sendActivity(reply);
+        return await turnContext.sendActivity(reply);
     }
 
     /**
@@ -157,7 +157,7 @@ export class SuggestedActionsBot {
      */
     async sendQuestions(turnContext) {
         const reply = MessageFactory.suggestedActions(['Red', 'Yellow', 'Blue'], 'Question 1');
-        await turnContext.sendActivity(reply);
+        return await turnContext.sendActivity(reply);
     }
 
     async startQuiz(turnContext, userProfile) {
@@ -180,6 +180,9 @@ export class SuggestedActionsBot {
     }
 
     async runJSQuiz(turnContext) {
+        
+        await this.sendQuestions(turnContext);
+
         const text = turnContext.activity.text;
         // const validColors = ['Red', 'Blue', 'Yellow']; // for multiple correct answers
         const validColors = ['Blue'];
