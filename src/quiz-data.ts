@@ -25,18 +25,18 @@ export const javaScriptQuiz = [
 export const reactQuiz = [
   {
     id: 1,
-    question: "",
+    question: "React Question 1",
     proposedAnswers: [
-      
+      "bye", "not  bye"
     ],
-    expectedAnswer: ""
+    expectedAnswer: "bye"
   }, {
     id: 2,
-    question: "",
+    question: "React Question 2",
     proposedAnswers: [
-      
+      "hello", "not hello"
     ],
-    expectedAnswer: ""
+    expectedAnswer: "hello"
   }
 ]
 

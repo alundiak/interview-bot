@@ -3,10 +3,13 @@ import * as path from 'path';
 import { config } from 'dotenv';
 import { BotFrameworkAdapter, MemoryStorage, ConversationState, UserState } from 'botbuilder';
 import { BotConfiguration, IEndpointService } from 'botframework-config';
+
 // import { MyBot } from './bot';
 // import { SuggestedActionsBot } from './bot-suggested-actions';
-import { MyBot } from './bot-complex-dialog';
 // import { MyBot } from './bot-multi-prompt';
+// import { MyBot } from './bot-complex-dialog';
+import { MyBot } from './bot-custom-dialogs-with-slots';
+
 const ENV_FILE = path.join(__dirname, '..', '.env');
 const env = config({ path: ENV_FILE });
 const DEV_ENVIRONMENT = 'development';

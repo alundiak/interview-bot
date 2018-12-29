@@ -14,7 +14,7 @@ Interview Bot, which maintains a simple quiz-like dialog for initial Candidate I
 
 ## Idea
 
-Bot will provide a quiz with questions. Interview Person should provide `type` of quiz: `JavaScript`, `React`, `Java`, `TBD`. Then start answering questions. Bot will analyze answers and give feedback right away. Logic for making decision is very easy - only one question is correct, and Bot is programmed to know it, and if user reply is the same as. expected by Bot - then question is passed (OK).
+Bot will provide a quiz with questions. Interview Person should select `type` of quiz: `JavaScript`, `React`, `Java`, `TBD`. Then start answering questions. Bot will analyze answers and give feedback right away. Logic for making decision is very easy - only one question is correct, and Bot is programmed to know it, and if user reply is the same as. expected by Bot - then question is passed (OK).
 
 
 ## Tech Stack
@@ -30,6 +30,11 @@ Bot will provide a quiz with questions. Interview Person should provide `type` o
 - Add in Telegram
 - todo
 
+## Bot Flow
+- Selecting quiz type is first, dedicated (1st) dialog. Person should be able to `select` (click from suggested actions (`ChoicePrompt`) or `cancel` that bot flow.
+- Taking any quiz is dedicated (2nd) dialog. Person should be able to answer questions, by clicking suggested actions, and if `cancel`-ed, then quiz interupped, and any intermediate results deleted from Bot state.
+- After success/fail selected quiz, Bot should suggest to take new (anotehr) kind of quiz or (optional) re-take previous quiz. Future feature.
+- 
 
 ## How to develop Bot?
 

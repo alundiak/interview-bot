@@ -63,12 +63,13 @@ export class MyBot {
         this.dialogs.add(new WaterfallDialog(TOP_LEVEL_DIALOG)
             .addStep(this.nameStep.bind(this))
             .addStep(this.startSelectionStep.bind(this))
-            .addStep(this.acknowledgementStep.bind(this)));
+            .addStep(this.acknowledgementStep.bind(this))
+        );
 
         this.dialogs.add(new WaterfallDialog(QUIZ_RESULTS_DIALOG)
             .addStep(this.selectionStep.bind(this))
-            .addStep(this.mainQuizBodyStep.bind(this))
             // .addStep(this.loopStep.bind(this))
+            // .addStep(this.mainQuizBodyStep.bind(this))
         );
     }
 
@@ -82,6 +83,9 @@ export class MyBot {
             // the dialog stack and figure out what (if any) is the active dialog.
             const dialogContext = await this.dialogs.createContext(turnContext);
             const results = await dialogContext.continueDialog();
+            
+            console.log('onTurn status', results.status);
+            
             switch (results.status) {
                 case DialogTurnStatus.cancelled:
                 case DialogTurnStatus.empty:
@@ -113,7 +117,7 @@ export class MyBot {
     }
 
     getQuizResultsStatus(results: any): string {
-        console.log(results);
+        // console.log(results);
         const { value, index, score, synonym, resultScore, maxScore } = results.result.quizList;
         const status = `Your result for **${value}** quiz is ${resultScore} from ${maxScore}.`;
         const scoreStatus = {
@@ -153,14 +157,10 @@ export class MyBot {
         // Otherwise, start the review selection dialog.
         return await stepContext.beginDialog(QUIZ_RESULTS_DIALOG);
         // }
-            
-        // console.log(stepContext);
-
-        // await stepContext.context.sendActivity(`Quiz ABC started!`);
     }
 
     async acknowledgementStep(stepContext) {
-        console.log(stepContext);
+        // console.log(stepContext);
         
         // Set the user's quiz selection to what they entered in the review-selection dialog.
         const list = stepContext.result || [];
@@ -174,6 +174,8 @@ export class MyBot {
     }
 
     async selectionStep(stepContext) {
+        console.log('selectionStep stepContext.values', stepContext.values);
+        
         // Continue using the same selection list, if any, from the previous iteration of this dialog.
         const list = Array.isArray(stepContext.options) ? stepContext.options : [];
         stepContext.values[SELECTED_QUIZ] = list;
@@ -207,32 +209,37 @@ export class MyBot {
         });
     }
 
-    async mainQuizBodyStep(stepContext) {
-        console.log('mainQuizBodyStep', stepContext.values[SELECTED_QUIZ]);
-        // MAIN QUIZ BODY LOGIC - Slots?
-
-        // return await stepContext.beginDialog(QUIZ_RESULTS_DIALOG);
-    }
-
     async loopStep(stepContext) {
         console.log('loop', stepContext.values[SELECTED_QUIZ]);
 
         // Retrieve their selection list, the choice they made, and whether they chose to finish.
         const list = stepContext.values[SELECTED_QUIZ];
+        console.log('LOOP LIST', list);
+        
         const choice = stepContext.result;
-        // const done = choice.value === DONE_OPTION;
+        const done = choice.value === DONE_OPTION;
 
-        // if (!done) {
-        // If they chose a quiz, add it to the list.
-        list.push(choice.value);
-        // }
+        console.log(choice.value); // JavaScript | React
+        
+        if (!done) {
+            // If they chose a quiz, add it to the list.
+            list.push(choice.value);
+        }
 
-        if (/* done ||  */list.length > 1) {
+        if (done ||  list.length > 1) {
             // If they're done, exit and return their list.
             return await stepContext.endDialog(list);
         } else {
             // Otherwise, repeat this dialog, passing in the list from this iteration.
-            return await stepContext.replaceDialog(QUIZ_RESULTS_DIALOG, list);
+            // return await stepContext.replaceDialog(QUIZ_RESULTS_DIALOG, list);
+            // USE QUIZ BODY HERE as next step
         }
+    }
+
+
+    async mainQuizBody(stepContext) {
+        return await console.log('mainQuizBodyStep');
+        // MAIN QUIZ BODY LOGIC - Slots?
+
     }
 }
