@@ -83,9 +83,9 @@ export class MyBot {
             // the dialog stack and figure out what (if any) is the active dialog.
             const dialogContext = await this.dialogs.createContext(turnContext);
             const results = await dialogContext.continueDialog();
-            
+
             console.log('onTurn status', results.status);
-            
+
             switch (results.status) {
                 case DialogTurnStatus.cancelled:
                 case DialogTurnStatus.empty:
@@ -161,11 +161,11 @@ export class MyBot {
 
     async acknowledgementStep(stepContext) {
         // console.log(stepContext);
-        
+
         // Set the user's quiz selection to what they entered in the review-selection dialog.
         const list = stepContext.result || [];
         stepContext.values[USER_INFO].quizList = list;
-        stepContext.values[USER_INFO].quizResults = {a: 123, b: 456};
+        stepContext.values[USER_INFO].quizResults = { a: 123, b: 456 };
 
         await stepContext.context.sendActivity(`${stepContext.values[USER_INFO].name}, Quiz ${list.value} starts now!`);
 
@@ -175,7 +175,7 @@ export class MyBot {
 
     async selectionStep(stepContext) {
         console.log('selectionStep stepContext.values', stepContext.values);
-        
+
         // Continue using the same selection list, if any, from the previous iteration of this dialog.
         const list = Array.isArray(stepContext.options) ? stepContext.options : [];
         stepContext.values[SELECTED_QUIZ] = list;
@@ -215,18 +215,18 @@ export class MyBot {
         // Retrieve their selection list, the choice they made, and whether they chose to finish.
         const list = stepContext.values[SELECTED_QUIZ];
         console.log('LOOP LIST', list);
-        
+
         const choice = stepContext.result;
         const done = choice.value === DONE_OPTION;
 
         console.log(choice.value); // JavaScript | React
-        
+
         if (!done) {
             // If they chose a quiz, add it to the list.
             list.push(choice.value);
         }
 
-        if (done ||  list.length > 1) {
+        if (done || list.length > 1) {
             // If they're done, exit and return their list.
             return await stepContext.endDialog(list);
         } else {
