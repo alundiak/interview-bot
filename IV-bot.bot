@@ -8,6 +8,14 @@
             "appId": "",
             "appPassword": "",
             "id": "1"
+        },
+        {
+            "type": "endpoint",
+            "name": "production",
+            "endpoint": "https://iv-bot.herokuapp.com/api/messages",
+            "appId": "",
+            "appPassword": "",
+            "id": "2"
         }
     ],
     "padlock": "",
