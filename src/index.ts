@@ -39,7 +39,7 @@ const adapterConfig = {
     appId: endpointConfig.appId || process.env.microsoftAppID,
     appPassword: endpointConfig.appPassword || process.env.microsoftAppPassword
 };
-// console.log(a);
+console.log(adapterConfig);
 const adapter = new BotFrameworkAdapter(adapterConfig);
 
 const memoryStorage = new MemoryStorage();
