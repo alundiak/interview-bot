@@ -15,7 +15,7 @@ const askTemplate = (text) => {
             "type": "template",
             "payload": {
                 "template_type": "button",
-                "text": text,
+                "text": text, // (#100) The parameter text is required
                 "buttons": [
                     {
                         "type": "postback",
@@ -126,6 +126,38 @@ const attachmentTemplate = (received_message) => {
             }
         }
     }
+}
+
+const genericTemplate = () => {
+    let generic_template = {
+        template_type: 'generic',
+        elements: [
+            {
+                'title': 'This is a generic template',
+                'subtitle': 'Plus a subtitle!',
+                'buttons': [
+                    {
+                        'type': 'postback',
+                        'title': 'Postback Button',
+                        'payload': 'postback_payload'
+                    },
+                    {
+                        'type': 'web_url',
+                        'title': 'URL Button',
+                        'url': 'https://messenger.fb.com/'
+                    }
+                ]
+            }
+        ]
+    }
+
+    return {
+        "attachment": {
+            "type": "template",
+            "payload": generic_template
+        }
+    }
+
 }
 
 module.exports = {

@@ -39,6 +39,16 @@ Bot will use this token to make calls to Facebook messenger API to respond to us
 
 Copy HTTPS !!! url from `ngrok`, like this `https://a2095cce.ngrok.io` and go to Messenger product settings and setup WebHook.
 
+### Setup subscription
+
+https://developers.facebook.com/docs/messenger-platform/getting-started/app-setup
+
+> Under 'Subscription Fields', select the webhook events you want delivered to you webhook. At a minimum, we recommend you choose messages and messaging_postbacks to get started.
+
+https://developers.facebook.com/apps/
+
+1) Select your App (bot)
+2) Messenger \ Settings \ Webhooks \ Edit Events
 
 ### (option1) Set custom Greeting and Postback for the Page via curl
 
@@ -166,21 +176,51 @@ Response:
 ```
 
 
+# Facebook Bot troubleshooting.
+
+```
+{
+  message: '(#100) No matching user found',
+  type: 'OAuthException',
+  code: 100,
+  error_subcode: 2018001,
+  fbtrace_id: 'A-GBya9lupb0oSXvW5gevFP'
+}
+```
+
+https://stackoverflow.com/questions/45523746/facebook-api-100-no-matching-user-found
+
+So looks like sender.ID is is PSID ???
+
+
+If too much webhook events, then disable `message_echos` event subscription.
+- https://stackoverflow.com/questions/36714200/facebook-messenger-webhook-continuously-sending-messages
+
+
+
+
 # NLP
 
 - Dialogflow - https://dialogflow.com/
 
 > Dialogflow (once known as Api.ai) is a service owned by Google that allows developers to build speech to text, natural language processing and artificially intelligent systems that you can train with your own custom functionality.
 
-- Wit.ai
+- Wit.ai - https://github.com/wit-ai/node-wit
 
 > Wit.ai (owned by Facebook) works similarly to Dialogflow: it also processes human speech patterns and filters useful data like intent and context from it.
 
 
+# Other APIs, tools, SDKs
+
+- https://github.com/amuramoto/messenger-node - looks like OK. Need to try.
+- http://botmasterai.com/documentation/latest/ - BotMaster - seems to be all bots connectors.
+
 # Examples
+- [2015] http://ukimiawz.github.io/facebook/2015/08/12/webhook-facebook-subscriptions/
 - [2017] https://github.com/perusworld/node-facebook-messenger-api
 - [2017] https://medium.com/crowdbotics/how-to-create-your-very-own-facebook-messenger-bot-with-dialogflow-and-node-js-in-just-one-day-f5f2f5792be5
 - [2018] https://blog.pusher.com/facebook-chatbot-dialogflow/
 - [2018] https://developers.facebook.com/docs/messenger-platform/getting-started/quick-start
   + https://github.com/fbsamples/messenger-platform-samples
   + https://quantizd.com/building-facebook-messenger-bot-with-nodejs/
+- [2019] https://developers.facebook.com/docs/messenger-platform/getting-started/sample-apps - Official examples.
