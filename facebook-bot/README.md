@@ -214,6 +214,16 @@ If too much webhook events, then disable `message_echos` event subscription.
 
 - https://github.com/amuramoto/messenger-node - looks like OK. Need to try.
 - http://botmasterai.com/documentation/latest/ - BotMaster - seems to be all bots connectors.
+- https://developers.google.com/sheets/api/quickstart/nodejs - NodeJS and Google Spreadsheet.
+- https://github.com/gsuitedevs/node-samples/tree/master/sheets - samples.
+- Google Cloud Platform
+  - https://developers.google.com/sheets/api/
+  - https://console.cloud.google.com/home/dashboard
+  - https://github.com/gsuitedevs/node-samples/blob/master/sheets/snippets/snippets.js#L290
+  - https://github.com/gsuitedevs/node-samples/blob/master/sheets/snippets/snippets.js#L194
+  - https://github.com/googleapis/google-api-nodejs-client#google-apis-nodejs-client
+
+
 
 # Examples
 - [2015] http://ukimiawz.github.io/facebook/2015/08/12/webhook-facebook-subscriptions/

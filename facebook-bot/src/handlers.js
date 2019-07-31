@@ -13,7 +13,7 @@ const handleMessage = (sender_psid, received_message) => {
     if (attachments) {
         response = attachmentTemplate(received_message);
     } else if (text) {
-        response = askTemplate('lundiak default text'); // better, but hardcode
+        // response = askTemplate('lundiak default text'); // better, but hardcode
         // response = askTemplate(received_message.text); // not sure if good, but it was in example
     }
 

@@ -9,3 +9,5 @@ node_modules
 lib
 .vscode
 IV-test.bot
+credentials.json
+token.json

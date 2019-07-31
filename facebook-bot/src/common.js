@@ -6,8 +6,13 @@ const request = require('request');
 const accessToken = process.env.FB_PAGE_ACCESS_TOKEN;
 const baseURI = 'https://graph.facebook.com/v4.0/';
 
-// Sends response messages via the Send API
-// Send the HTTP request to the Messenger Platform
+/**
+ * @description Sends response messages via the Send API to the Messenger Platform.
+ *
+ * @param {string} sender_psid
+ * @param {object} response - in fact it's payloadMessage
+ * @param {function} cb
+ */
 const callSendAPI = (sender_psid, response, cb = null) => {
     console.log('callSendAPI call', JSON.stringify(response));
 
