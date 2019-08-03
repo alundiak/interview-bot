@@ -45,10 +45,15 @@ const handleMessage = (sender_psid, received_message) => {
 
             const [emailObj] = nlp.entities.email
 
-            const areAllItemsReplied = candidateData
-                // && Object.value(candidateData.replies).length === 5; // VERY HARDCODE
-                && Object.values(candidateData.replies).every(reply => +reply > 0); // A bit better
+            const repliesIndexes = candidateData && Object.values(candidateData.replies);
 
+            const areAllItemsReplied = repliesIndexes.length === 5 // VERY HARDCODE for Frontend Formularz
+                && repliesIndexes.every(reply => +reply > 0); // A bit better
+
+            if (!areAllItemsReplied){
+                console.log('NOT ALL ANSWERED - throw message to Candidate - TODO');
+                // Need to re-do SendPulse flow, and inject JavaScript code for verifying all answers.
+            }
 
             // just assumption for having truthy condition.
             // For example, these all gives "email" type of entity, but:

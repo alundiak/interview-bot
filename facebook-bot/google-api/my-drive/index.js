@@ -25,6 +25,13 @@ const credentialsPath = path.join(__dirname, CREDENTIALS_PATH);
 // Expected to get somehow from ExpressJS Server.
 // TODO re-do this code to avoid hardcoded technologies.
 const resetFormularzArray = [
+    [0], // css
+    [0], // js
+    [0], // react
+    [0], // angular
+    [0], // tools
+];
+const resetFormularzArray2Columns = [
     [0, 0], // css
     [0, 0], // js
     [0, 0], // react
@@ -34,7 +41,7 @@ const resetFormularzArray = [
 
 module.exports = {
     dataFromBot: {
-        newSheetTitle: 'Andrii Lundiak (Bot)',
+        newSheetTitle: 'By Bot',
         candidateEmail: 'landike@gmail.com', // That default value can be Admin email. But not sure.
         formularzArray: resetFormularzArray
     },
