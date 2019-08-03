@@ -15,7 +15,8 @@ const sheetIdForToDuplicate = 1917458364;
 const testSheetId = 622666726; // "Andrii Lundiak (Bot)" after duplicate and rename.
 
 const readRange = 'template!A10:B14';
-const writeRange = 'Andrii Lundiak (Bot)!B10:C14'; // TODO
+const writeRange = 'Andrii Lundiak (Bot)!B10:B14'; // if 1 column (Speed Recruiting case)
+// const writeRange = 'Andrii Lundiak (Bot)!B10:C14'; // if 2 columns (Theoretical case)
 
 /**
  * Prints the names and majors of students in a sample spreadsheet:
@@ -43,8 +44,6 @@ async function readData(auth) {
  *
  * @param {*} auth
  *
- * @param {string} range The range of values to append.
- *
  * @param {(string[])[]} values A 2d array of values to append.
  * values structure
     [
@@ -60,6 +59,8 @@ async function readData(auth) {
  * @param {object} valueInputOption Value input options.
  * @see https://developers.google.com/sheets/api/reference/rest/v4/ValueInputOption
  *
+ * @param {string} range The range of values to append.
+ *
  * Update
  * https://github.com/gsuitedevs/node-samples/blob/master/sheets/snippets/snippets.js#L194
  *
@@ -68,17 +69,20 @@ async function readData(auth) {
  *
  * https://developers.google.com/sheets/api/reference/rest/
  */
-function writeData(auth, values, valueInputOption = 'RAW') {
+function writeData(auth, values, valueInputOption = 'RAW', customRange) {
     const sheets = google.sheets({ version: 'v4', auth });
 
     const options = {
         spreadsheetId,
         valueInputOption,
-        range: writeRange,
+        range: customRange || writeRange,
         resource: {
             values,
         }
     };
+
+    console.log('WRITE DATA options');
+    console.log(options);
 
     // https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update
     sheets.spreadsheets.values.update(options, (err, res) => {

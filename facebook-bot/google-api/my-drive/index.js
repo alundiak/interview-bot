@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { authorize, getNewToken } = require('../common');
+const { composeUpdateValues } = require('./helpers');
 // const { getSpreadsheetData: callback } = require('./my-files');
 // const { duplicateSheet } = require('./my-files'); // works, but need to improve creation new tab when similar exists
 const { interviewBotLogic } = require('./my-files');
@@ -22,61 +23,83 @@ const CREDENTIALS_PATH = 'credentials.json';
 const credentialsPath = path.join(__dirname, CREDENTIALS_PATH);
 
 // Expected to get somehow from ExpressJS Server.
-const dataFromBot = {
-    newSheetTitle: 'Andrii Lundiak (Bot)',
-    candidateEmail: 'landike@gmail.com',
-    formularz: {
-        css: 2,
-        javascript: 3,
-        react: 1,
-        angular: 1,
-        nodejs: 1
-    },
-    formularzArray: [
-        [3,6],
-        [2,3],
-        [1,3],
-        [2,3],
-        [2,3],
-    ]
-};
-
+// TODO re-do this code to avoid hardcoded technologies.
 const resetFormularzArray = [
-    [0,0],
-    [0,0],
-    [0,0],
-    [0,0],
-    [0,0],
+    [0, 0], // css
+    [0, 0], // js
+    [0, 0], // react
+    [0, 0], // angular
+    [0, 0], // tools
 ];
 
-dataFromBot.formularzArray = resetFormularzArray;
+module.exports = {
+    dataFromBot: {
+        newSheetTitle: 'Andrii Lundiak (Bot)',
+        candidateEmail: 'landike@gmail.com', // That default value can be Admin email. But not sure.
+        formularzArray: resetFormularzArray
+    },
 
-//
-// Main Interview Bot Callback logic.
-//
-function callback(auth) {
-    interviewBotLogic(auth, dataFromBot);
-    // duplicateSheet(auth, dataFromBot);
-};
+    initGoogleApi: function () {
+        // Load client secrets from a local file.
+        fs.readFile(credentialsPath, (err, content) => {
+            // content is Buffer.
 
-// Load client secrets from a local file.
-fs.readFile(credentialsPath, (err, content) => {
-    // content is Buffer.
+            if (err) {
+                return console.log('Error loading client secret file:', err);
+            }
 
-    if (err) {
-        return console.log('Error loading client secret file:', err);
-    }
+            // Authorize a client with credentials, then call the Google Sheets API.
+            this.oAuth2Client = authorize(JSON.parse(content));
 
-    // Authorize a client with credentials, then call the Google Sheets API.
-    const oAuth2Client = authorize(JSON.parse(content));
+            fs.readFile(tokenPath, (err, token) => {
+                if (err) {
+                    return getNewToken(this.oAuth2Client, /* callback, */ tokenPath, SCOPES);
+                }
+                this.oAuth2Client.setCredentials(JSON.parse(token));
 
-    fs.readFile(tokenPath, (err, token) => {
-        if (err) {
-            return getNewToken(oAuth2Client, callback, tokenPath, SCOPES);
+                // callback(oAuth2Client);
+            });
+
+        });
+    },
+
+    /**
+     *
+     * @param {Object} candidateData
+     * Example:
+     * {
+            replies: {
+                js: '1',
+                react: '1',
+                angular: '2',
+                tools: '2',
+                css: '2'
+            },
+            email: 'landike@gmail.com',
+            name: ''
         }
-        oAuth2Client.setCredentials(JSON.parse(token));
+     */
+    setDataFromBot: function (candidateData) {
+        const { replies, email, name } = candidateData;
+        const parsedValues = composeUpdateValues(replies);
 
-        callback(oAuth2Client);
-    });
+        this.dataFromBot['formularzArray'] = parsedValues || resetFormularzArray;
+        this.dataFromBot['candidateEmail'] = email;
+        // TODO
+        if (name) {
+            this.dataFromBot['newSheetTitle'] = name; // used for Tab Name
+        } else {
+            this.dataFromBot['newSheetTitle'] = email;
+        }
+        // TODO
 
-});
+    },
+
+    callback: function (auth) {
+        interviewBotLogic(auth || this.oAuth2Client, this.dataFromBot);
+    },
+
+    updateSpreadSheet: function () {
+        this.callback(/* this.oAuth2Client */);
+    }
+}

@@ -19,7 +19,7 @@ function authorize(credentials) {
  * @param {string} TOKEN_PATH from token.json.
  * @param {array} SCOPES
  */
-function getNewToken(oAuth2Client, callback, TOKEN_PATH, SCOPES) {
+function getNewToken(oAuth2Client,/*  callback,  */TOKEN_PATH, SCOPES) {
     const authUrl = oAuth2Client.generateAuthUrl({
         access_type: 'offline',
         scope: SCOPES,
@@ -48,7 +48,7 @@ function getNewToken(oAuth2Client, callback, TOKEN_PATH, SCOPES) {
                 console.log('Token stored to', TOKEN_PATH);
             });
 
-            callback(oAuth2Client);
+            // callback(oAuth2Client);
         });
     });
 }

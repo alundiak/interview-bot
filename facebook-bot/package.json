@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./server-express.js",
+    "d": "nodemon --inspect ./server-express.js",
     "startGoogle": "node ./google-api/my-drive/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,5 +18,8 @@
     "express": "^4.17.1",
     "googleapis": "^39.2.0",
     "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
   }
 }

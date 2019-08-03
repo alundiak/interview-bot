@@ -187,6 +187,11 @@ If too much webhook events, then disable `message_echos` event subscription.
 - https://stackoverflow.com/questions/36714200/facebook-messenger-webhook-continuously-sending-messages
 
 
+```
+GET/4.0/159680***0437708 - shows Page info
+GET/4.0/235579***864046 - shows App info
+```
+
 # Google CLoud Platform troubleshooting
 
 ```
