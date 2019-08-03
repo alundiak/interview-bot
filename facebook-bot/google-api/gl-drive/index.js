@@ -17,7 +17,3 @@ fs.readFile('./credentials.json', (err, content) => {
     authorize(JSON.parse(content), readTemplateData, TOKEN_PATH, SCOPES);
     // TOKEN_PATH and SCOPES should be different for MT and GL drives.
 });
-
-
-
-

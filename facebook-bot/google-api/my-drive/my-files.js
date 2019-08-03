@@ -2,16 +2,20 @@
 // Expected place to contain logic in regards to access MY files (read, write, delete)
 //
 const { google } = require('googleapis');
+const { onlyValues } = require('./helpers');
 
 // initial https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
 // my https://docs.google.com/spreadsheets/d/18OxS8dh_ftYzFBDIoXkt6g4_fQQbwF87P1WH1RAW4mE/edit
 const spreadsheetId = '18OxS8dh_ftYzFBDIoXkt6g4_fQQbwF87P1WH1RAW4mE';
 
 // 0 => Sheet1, 1917458364 => "template",
+// To get initial info about sheetId, need to call getSpreadsheetData() and look to console.log()
 const sheetIdForToDuplicate = 1917458364;
-// But to get initial info about sheetId, need to call getSpreadsheetData() and look to console.log()
+// TODO rework this code to be automatic.
+const testSheetId = 622666726; // "Andrii Lundiak (Bot)" after duplicate and rename.
 
-const newSheetTitle = "Andrii Lundiak" // TODO - add here info from Facebook/Messenger bot;
+const readRange = 'template!A10:B14';
+const writeRange = 'Andrii Lundiak (Bot)!B10:C14'; // TODO
 
 /**
  * Prints the names and majors of students in a sample spreadsheet:
@@ -19,55 +23,75 @@ const newSheetTitle = "Andrii Lundiak" // TODO - add here info from Facebook/Mes
  * my https://docs.google.com/spreadsheets/d/18OxS8dh_ftYzFBDIoXkt6g4_fQQbwF87P1WH1RAW4mE/edit#gid=0
  * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
  */
-function basicReadData(auth) {
+async function readData(auth) {
     const sheets = google.sheets({ version: 'v4', auth });
 
-    sheets.spreadsheets.values.get({
+    // https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get
+    const data = await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: 'Sheet1!A2:E',
-    }, (err, res) => {
-        if (err) {
-            return console.log('The API returned an error: ' + err);
-        }
-        const rows = res.data.values;
-        if (rows.length) {
-            // Print columns A and E, which correspond to indices 0 and 4.
-            rows.map((row) => {
-                console.log(row);
-                // console.log(`${row[0]}, ${row[4]}`);
-            });
-        } else {
-            console.log('No data found.');
-        }
+        range: readRange,
+    }).then(function (response) {
+        return response.data.values || [];
+    }, function (reason) {
+        console.error('Read Data error: ' + reason.result.error.message);
     });
+
+    return data;
 }
 
 /**
  *
  * @param {*} auth
+ *
  * @param {string} range The range of values to append.
+ *
+ * @param {(string[])[]} values A 2d array of values to append.
+ * values structure
+    [
+        [
+            Cell values ...
+        ],
+        [
+            Cell values ...
+        ],
+        And so on - Additional rows ...
+    ];
+ *
  * @param {object} valueInputOption Value input options.
- * @param {(string[])[]} _values A 2d array of values to append.
+ * @see https://developers.google.com/sheets/api/reference/rest/v4/ValueInputOption
+ *
+ * Update
  * https://github.com/gsuitedevs/node-samples/blob/master/sheets/snippets/snippets.js#L194
+ *
+ * Batch Update
+ * https://github.com/gsuitedevs/node-samples/blob/master/sheets/snippets/snippets.js#L240
+ *
  * https://developers.google.com/sheets/api/reference/rest/
  */
-function basicWriteData(auth, range = 'template!A10:B14', valueInputOption, _values) {
+function writeData(auth, values, valueInputOption = 'RAW') {
     const sheets = google.sheets({ version: 'v4', auth });
 
-    sheets.spreadsheets.values.update({
+    const options = {
         spreadsheetId,
-        range,
-    }, (err, res) => {
+        valueInputOption,
+        range: writeRange,
+        resource: {
+            values,
+        }
+    };
+
+    // https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update
+    sheets.spreadsheets.values.update(options, (err, res) => {
         if (err) {
             return console.log('The API returned an error: ' + err);
         }
-        const rows = res.data.values;
-        if (rows.length) {
-            // Print columns A and E, which correspond to indices 0 and 4.
-            rows.map((row) => {
-                console.log(row);
-                // console.log(`${row[0]}, ${row[4]}`);
-            });
+
+        if (res) {
+            console.log(res);
+            console.log('Updated range - ', res.data.updatedRange);
+            console.log('%d columns updated.', res.data.updatedColumns);
+            console.log('%d rows updated.', res.data.updatedRows);
+            console.log('%d cells updated.', res.data.updatedCells);
         } else {
             console.log('No data found.');
         }
@@ -102,7 +126,7 @@ function getSpreadsheetData(auth) {
 
 // https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.sheets/copyTo
 // https://developers.google.com/sheets/api/samples/sheet
-function duplicateSheet(auth) {
+function duplicateSheet(auth, dataFromBot) {
     const sheets = google.sheets({ version: 'v4', auth });
 
     var request = {
@@ -121,12 +145,13 @@ function duplicateSheet(auth) {
             return;
         }
         // console.log(JSON.stringify(response.data, null, 2));
-        renameSheet(auth, response.data.sheetId);
+
+        renameSheet(auth, response.data.sheetId, dataFromBot);
     });
 }
 
 // https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/batchUpdate
-function renameSheet(auth, sheetId, newSheetTitle) {
+function renameSheet(auth, sheetId, dataFromBot) {
     const sheets = google.sheets({ version: 'v4', auth });
 
     var request = {
@@ -140,7 +165,7 @@ function renameSheet(auth, sheetId, newSheetTitle) {
                     updateSheetProperties: {
                         properties: {
                             sheetId, // 0 => Sheet1, 1917458364 => "template", any "1114413753" is a copy of "template".
-                            title: newSheetTitle // TODO
+                            title: dataFromBot.newSheetTitle // TODO
                         },
                         fields: 'title' // that was odd in docs to understand '*' vs. 'title'.
                     },
@@ -159,10 +184,30 @@ function renameSheet(auth, sheetId, newSheetTitle) {
     });
 }
 
+
+//
+// First we need to duplicate existed "template" sheet.
+// Then need to rename it, by name provided from InterviewBot candidate input.
+// Then take data from InterviewBot and update spreadsheet cells.
+// And finally send some emails, notifications, etc. to GL/TAG.
+//
+async function interviewBotLogic(auth, dataFromBot) {
+    // await duplicateSheet(auth, dataFromBot);
+    // await renameSheet(auth, dataFromBot);
+
+    // const spreadSheetData = await readData(auth);
+    // const newRows = onlyValues(spreadSheetData);
+
+    const myValues = dataFromBot.formularzArray;
+
+    await writeData(auth, myValues);
+}
+
 module.exports = {
     getSpreadsheetData,
-    basicReadData,
-    basicWriteData,
+    readData,
+    writeData,
     duplicateSheet,
-    renameSheet
+    renameSheet,
+    interviewBotLogic
 }

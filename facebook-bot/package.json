@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./server-express.js",
+    "startGoogle": "node ./google-api/my-drive/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

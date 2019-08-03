@@ -7,8 +7,9 @@ const { askTemplate, imageTemplate, attachmentTemplate } = require('./payloads')
 const handleMessage = (sender_psid, received_message) => {
     let response = {text: 'hi (c) alundiak'};
 
-    const { text, attachments, nlp } = received_message;
+    const { text, attachments, nlp, quick_reply } = received_message;
     nlp && console.log('NLP object', nlp.entities);
+    quick_reply && console.log('Quick Reply object', quick_reply);
 
     if (attachments) {
         response = attachmentTemplate(received_message);

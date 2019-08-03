@@ -96,4 +96,8 @@ app.post('/webhook', (req, res) => {
 
 });
 
+app.get('/google', (req, res) => {
+    // TODO verify token, etc.
+});
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
