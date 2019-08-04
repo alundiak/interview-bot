@@ -25,11 +25,11 @@ const credentialsPath = path.join(__dirname, CREDENTIALS_PATH);
 // Expected to get somehow from ExpressJS Server.
 // TODO re-do this code to avoid hardcoded technologies.
 const resetFormularzArray = [
-    [0], // css
-    [0], // js
-    [0], // react
-    [0], // angular
-    [0], // tools
+    [3], // css
+    [1], // js
+    [1], // react
+    [1], // angular
+    [3], // tools
 ];
 const resetFormularzArray2Columns = [
     [0, 0], // css
@@ -42,12 +42,15 @@ const resetFormularzArray2Columns = [
 module.exports = {
     dataFromBot: {
         newSheetTitle: 'By Bot',
-        candidateEmail: 'landike@gmail.com', // That default value can be Admin email. But not sure.
+        candidateEmail: 'landike@gmail.com',
+        candidatePhone: '123',
         formularzArray: resetFormularzArray
     },
 
+    // TODO - rework into using Promise, because fs.readFile() does NOT return neither Promise, nor Promise-like objects.
     initGoogleApi: function () {
         // Load client secrets from a local file.
+
         fs.readFile(credentialsPath, (err, content) => {
             // content is Buffer.
 
@@ -65,6 +68,9 @@ module.exports = {
                 this.oAuth2Client.setCredentials(JSON.parse(token));
 
                 // callback(oAuth2Client);
+                this.updateSpreadSheet(); // due to async issue
+                // or
+                // interviewBotLogic(this.oAuth2Client, this.dataFromBot);
             });
 
         });
@@ -87,26 +93,31 @@ module.exports = {
         }
      */
     setDataFromBot: function (candidateData) {
-        const { replies, email, name } = candidateData;
+        const { replies, email, name, phone_number } = candidateData;
         const parsedValues = composeUpdateValues(replies);
 
         this.dataFromBot['formularzArray'] = parsedValues || resetFormularzArray;
-        this.dataFromBot['candidateEmail'] = email;
+        this.dataFromBot['candidateEmail'] = email; // cell C4
+
         // TODO
         if (name) {
-            this.dataFromBot['newSheetTitle'] = name; // used for Tab Name
+            this.dataFromBot['newSheetTitle'] = name; // cell B3, and Sheet/Tab Name
         } else {
             this.dataFromBot['newSheetTitle'] = email;
         }
+
+        if (phone_number) {
+            this.dataFromBot['candidatePhone'] = phone_number; // cell B4
+        }
         // TODO
-
     },
 
-    callback: function (auth) {
-        interviewBotLogic(auth || this.oAuth2Client, this.dataFromBot);
-    },
+    // callback: function (/* auth */) {
+    //     interviewBotLogic(/* auth ||  */this.oAuth2Client, this.dataFromBot);
+    // },
 
     updateSpreadSheet: function () {
-        this.callback(/* this.oAuth2Client */);
+        // this.callback(/* this.oAuth2Client */);
+        interviewBotLogic(this.oAuth2Client, this.dataFromBot);
     }
 }

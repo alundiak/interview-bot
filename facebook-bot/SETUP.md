@@ -205,3 +205,23 @@ Yes, for Quickstart app it's enabled by default. For any new custom Apps, need t
 GaxiosError: Invalid requests[0].updateSheetProperties: The sheet name cannot be empty.
 ```
 
+```
+{
+  code: 401,
+  message: 'Request is missing required authentication credential. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.',
+  errors: [
+    {
+      message: 'Login Required.',
+      domain: 'global',
+      reason: 'required',
+      location: 'Authorization',
+      locationType: 'header'
+    }
+  ],
+  status: 'UNAUTHENTICATED'
+}
+```
+
+In fact the code I re-did, using `initGoogleApi()` call and after that JavaScript call to updateSpreadsheetApi.
+No Promising, and that is was an issue.
+

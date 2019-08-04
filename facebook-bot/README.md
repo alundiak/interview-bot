@@ -13,7 +13,7 @@ Facebook Apps & Pages API notes
 
 - [Dialogflow](https://dialogflow.com/)
 
-> Dialogflow (once known as Api.ai) is a service owned by Google that allows developers to build speech to text, natural language processing and artificially intelligent systems that you can train with your own custom functionality.
+> Dialogflow (once known as [API.AI](https://api.ai/)) is a service owned by Google that allows developers to build speech to text, natural language processing and artificially intelligent systems that you can train with your own custom functionality.
 
 - [Wit.ai](https://github.com/wit-ai/node-wit)
 
@@ -24,7 +24,8 @@ Facebook Apps & Pages API notes
 
 - https://github.com/amuramoto/messenger-node - looks like OK. Need to try.
 - http://botmasterai.com/documentation/latest/ - BotMaster - seems to be all bots connectors.
-- https://github.com/remixz/messenger-bot - Messenger Bot
+- https://github.com/remixz/messenger-bot - A Node client for the Facebook Messenger Platform.
+- https://github.com/Charca/bootbot - Boot Bot - another NodeJS framework/Client.
 - Google Cloud Platform
   - https://console.cloud.google.com/home/dashboard
   - https://developers.google.com/sheets/api/
@@ -39,6 +40,8 @@ Facebook Apps & Pages API notes
 - [2015] http://ukimiawz.github.io/facebook/2015/08/12/webhook-facebook-subscriptions/
 - [2017] https://github.com/perusworld/node-facebook-messenger-api
 - [2017] https://medium.com/crowdbotics/how-to-create-your-very-own-facebook-messenger-bot-with-dialogflow-and-node-js-in-just-one-day-f5f2f5792be5
+- [2017] https://chatbotsmagazine.com/building-a-facebook-messenger-bot-using-nodejs-heroku-api-ai-8b53c1102531
+- [2017] https://hackernoon.com/how-to-build-a-facebook-bot-app-using-node-js-74629d4243ec
 - [2018] https://blog.pusher.com/facebook-chatbot-dialogflow/
 - [2018] https://developers.facebook.com/docs/messenger-platform/getting-started/quick-start
   + https://github.com/fbsamples/messenger-platform-samples

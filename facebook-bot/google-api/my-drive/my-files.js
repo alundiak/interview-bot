@@ -12,14 +12,14 @@ const spreadsheetId = '18OxS8dh_ftYzFBDIoXkt6g4_fQQbwF87P1WH1RAW4mE';
 // To get initial info about sheetId, need to call getSpreadsheetData() and look to console.log()
 const sheetIdForToDuplicate = 1917458364;
 // TODO rework this code to be automatic.
-const testSheetId = 622666726; // "Andrii Lundiak (Bot)" after duplicate and rename.
+const testSheetId = 622666726; // "By Bot" after duplicate and rename.
 
 const readRange = 'template!A10:B14';
 const writeRange = 'By Bot!B10:B14'; // if 1 column (Speed Recruiting case)
-// const writeRange = 'Andrii Lundiak (Bot)!B10:C14'; // if 2 columns (Theoretical case)
+// const writeRange = 'By Bot!B10:C14'; // if 2 columns (Theoretical case)
 const rangePrefix = '!B10:B14'; // Assumed STANDARD location. Extracted to variable for easy change after migration.
-
-const candidateNameCellPrefix = '!B24'; // if name provided, we can update that cell. If not - email instead.
+const candidateNameCellPrefix = '!B3'; // if name provided, we can update that cell. If not - email instead.
+const candidateEmailCellPrefix = '!C4'; // if email provided, we can update that cell.
 
 function getSpreadsheetMetaData(auth) {
     // sheets.spreadsheets.developerMetadata.get(request, function (err, response) {
@@ -66,9 +66,11 @@ async function duplicateSheet(auth, dataFromBot) {
     const data = await sheets.spreadsheets.sheets.copyTo(options)
         .then(function (response) {
             // console.log(JSON.stringify(response.data, null, 2));
-            return response.data.sheetId || null;
+            console.log('Duplicated sheet info:', response.data);
+            return response.data;
         }, function (reason) {
-            console.error('Duplicate Sheet error: ' + reason.result.error.message); // reason.response. ? // TODO
+            console.log(reason);
+            console.error('Duplicate Sheet error: ' + reason.response.data.error.message);
         });
 
     return data;
@@ -99,22 +101,44 @@ async function renameSheet(auth, sheetId, dataFromBot) {
         auth,
     };
 
-    const data = await sheets.spreadsheets.batchUpdate(options)
-        .then(function (response) {
-            // console.log(JSON.stringify(response, null, 2));
-            // console.log(response);
-            // response data. contains:
-            // "data": {
-            //     "spreadsheetId": "18OxS8dh_ftYzFBDIoXkt6g4_fQQbwF87P1WH1RAW4mE",
-            //     "replies": [
-            //       {}
-            //     ]
-            //   },
-            // So not really informative.
-            return response.status === 200; // Assumably it's good sign of renaming.
-        }, function (reason) {
-            console.error('Rename Sheet error: ' + reason.result.error.message); // reason.response. ? // TODO
-        });
+    let data;
+
+    try {
+        // main flow
+        data = await sheets.spreadsheets.batchUpdate(options)
+            .then(function (response) {
+                // console.log(JSON.stringify(response, null, 2));
+                console.log('Rename Sheet info:', response.data);
+                // response contains (.data):
+                // "data": {
+                //     "spreadsheetId": "18OxS8dh_ftYzFBDIoXkt6g4_fQQbwF87P1WH1RAW4mE",
+                //     "replies": [
+                //       {}
+                //     ]
+                //   },
+                // So not really informative.
+                return response.data;
+            }, function (reason) {
+                console.error('Rename Sheet error:',reason.errors);
+
+                const sheetExists = /already exists. Please enter another name/.test(reason.response.data.error.message);
+
+                if (sheetExists){
+                    throw new Error('Provide alternative Sheet Title value');
+                }
+            });
+    } catch(e){
+        options.resource.requests[0].updateSheetProperties.properties.title = `${dataFromBot.newSheetTitle} New`;
+
+        data = await sheets.spreadsheets.batchUpdate(options)
+            .then(function (response) {
+                return response.data;
+            }, function (reason) {
+                console.error('Rename Sheet error (another try):', reason.errors);
+            });
+
+        // But if "Sheet Name New" already exists, it will throw error again. SO better to use EMAIL as unique ID.
+    }
 
     return data;
 }
@@ -135,7 +159,7 @@ async function readData(auth) {
     }).then(function (response) {
         return response.data.values || [];
     }, function (reason) {
-        console.error('Read Data error: ' + reason.result.error.message); // reason.response. ? // TODO
+        console.error('Read Data error:', reason.errors);
     });
 
     return data;
@@ -185,13 +209,14 @@ async function writeData(auth, values, customRange, valueInputOption = 'RAW') {
         }
     };
 
-    console.log('WRITE DATA options');
-    console.log(options);
+    // console.log('WRITE DATA options');
+    // console.log(options);
 
     // https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update
     const data = await sheets.spreadsheets.values.update(options)
         .then(function (response) {
             // console.log(JSON.stringify(response, null, 2));
+            console.log('Update Sheet info:', response.data);
 
             console.log('Updated range - ', response.data.updatedRange);
             console.log('%d columns updated.', response.data.updatedColumns);
@@ -204,46 +229,85 @@ async function writeData(auth, values, customRange, valueInputOption = 'RAW') {
             // reason.code => 400
             // reason.response.status => 400
             // reason.errors = [ message, domain, reason ]
-            console.error('Update Spreadsheet error: ', reason.response.data.error);
+            console.error('Update Spreadsheet error:', reason.response.data.error);
         });
 
     return data;
 }
 
-// TODO writeBatchData
+// https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/batchUpdate
+// https://github.com/gsuitedevs/node-samples/blob/master/sheets/snippets/snippets.js#L240
+/**
+ *
+ * @param {*} auth
+ *
+ * @param {Array} customData - array of prepared Google ValueRange objects for batch update
+ * @see https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values#ValueRange
+ *
+ * @param {*} valueInputOption
+ */
+async function writeBatchData(auth, customData, valueInputOption = 'RAW') {
+    const sheets = google.sheets({ version: 'v4', auth });
 
+    const options = {
+        spreadsheetId,
+        resource: {
+            valueInputOption,
+            data: customData,
+        }
+    };
 
+    // console.log('WRITE BATCH DATA options');
+    // console.log(options);
+
+    const data = await sheets.spreadsheets.values.batchUpdate(options)
+        .then(function (response) {
+            // console.log(JSON.stringify(response, null, 2));
+            console.log('Batch Update info:', response.data.responses);
+
+            console.log('Total %d sheets updated.', response.data.totalUpdatedSheets);
+            console.log('Total %d columns updated.', response.data.totalUpdatedColumns);
+            console.log('Total %d rows updated.', response.data.totalUpdatedRows);
+            console.log('Total %d cells updated.', response.data.totalUpdatedCells);
+
+            return response.data;
+        }, function (reason) {
+            console.error('Batch Update Spreadsheet error: ', reason.response.data.error);
+        });
+
+    return data;
+}
 
 //
-// First we need to duplicate existed "template" sheet.
-// Then need to rename it, by name provided from InterviewBot candidate input.
-// Then take data from InterviewBot and update spreadsheet cells.
-// And finally send some emails, notifications, etc. to GL/TAG.
+// 1) Duplicate existed "template" sheet.
+// 2) Rename it, using name provided from InterviewBot candidate input as sheet title.
+// 3) Take data from InterviewBot and update spreadsheet cells.
+// 4) Send some emails, notifications, etc. to GL/TAG.
 //
 async function interviewBotLogic(auth, dataFromBot) {
-    const newSheetId = await duplicateSheet(auth, dataFromBot); // dataFromBot is optional for now - TODO / research
-    console.log('Duplicated sheet created, with sheetId - %d', newSheetId);
+    const { sheetId:newSheetId, title } = await duplicateSheet(auth, dataFromBot); // dataFromBot is optional for now - TODO / research
 
-    const isRenamed = await renameSheet(auth, newSheetId, dataFromBot);
-    console.log('isRenamed', isRenamed)
-    console.log('Sheet renamed, with new title - %s', dataFromBot.newSheetTitle);
+    await renameSheet(auth, newSheetId, dataFromBot);
 
     // const spreadSheetData = await readData(auth);
     // const newRows = onlyValues(spreadSheetData);
 
-    const cellValues = dataFromBot.formularzArray;
-    const customRange = `${dataFromBot.newSheetTitle}${rangePrefix}`;
-    const updatedData = await writeData(auth, cellValues, customRange);
+    // const cellValues = dataFromBot.formularzArray;
+    // const customRange = `${dataFromBot.newSheetTitle}${rangePrefix}`;
+    // await writeData(auth, cellValues, customRange);
 
-    console.log('isUpdated', updatedData);
+    const batchData = [{
+        range: `${dataFromBot.newSheetTitle}${candidateNameCellPrefix}`,
+        values: [[ dataFromBot.newSheetTitle ]]
+    }, {
+        range: `${dataFromBot.newSheetTitle}${candidateEmailCellPrefix}`,
+        values: [[ dataFromBot.candidateEmail ]]
+    }, {
+        range: `${dataFromBot.newSheetTitle}${rangePrefix}`,
+        values:  dataFromBot.formularzArray
+    }];
 
-    if (updatedData){
-        const { updatedRange, updatedColumns, updatedRows, updatedCells } = updatedData;
-        console.log('Sheet updated with new values from candidate');
-        console.log('Range - %s update. %d columns updated. %d rows updated. %d cells updated',
-            updatedRange, updatedColumns, updatedRows, updatedCells);
-    }
-
+    await writeBatchData(auth, batchData);
 }
 
 module.exports = {

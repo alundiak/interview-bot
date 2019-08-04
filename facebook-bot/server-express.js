@@ -47,27 +47,33 @@ app.get('/webhook', (req, res) => {
 });
 
 app.post('/webhook', (req, res) => {
+    // console.log(req);
+    // console.log(res);
 
     let body = req.body;
 
     if (body.object === 'page') {
 
         body.entry.forEach(function (entry) {
-            console.log('Webhook Entry Messaging', entry.messaging);
+            console.log('Webhook Entry', entry);
+            const { id: ID } = entry; // looks like Page ID (TestBot page ID).
 
             // Gets the message. entry.messaging is an array, but
             // will only ever contain one message, so we get index 0
             let webhook_event = entry.messaging[0];
-            let sender_psid = webhook_event.sender.id;
+            let { id:sender_psid } = webhook_event.sender;
             // sender: { id: '1596800530437708' } - looks like TestBot itself from Facebook Messenger.
             // sender: { id: '2011200215559139' } - looks like me (Andrii Lundiak)
             // sender => recipient
             // recipient => sender
             // etc
 
+            let { id:recipient_psid } = webhook_event.recipient;
+            const userId = recipient_psid; // TestBot page or IV-Bot app
+
             if (webhook_event.message) {
                 // let sender_psid = webhook_event.sender.id;
-                handleMessage(sender_psid, webhook_event.message);
+                handleMessage(sender_psid, webhook_event.message, userId);
             } else if (webhook_event.postback) {
                 // let sender_psid = webhook_event.recipient.id;
                 // "messaging_postbacks" event must be enabled in Messenger/Webhooks
@@ -84,7 +90,7 @@ app.post('/webhook', (req, res) => {
                 // https://developers.facebook.com/docs/pages/access-tokens/psid-api/faq/
                 // https://developers.facebook.com/docs/messenger-platform/identity/id-matching
 
-                handlePostBack(sender_psid, webhook_event.postback);
+                handlePostBack(sender_psid, webhook_event.postback, userId);
             }
         });
 
