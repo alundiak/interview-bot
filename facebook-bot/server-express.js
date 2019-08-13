@@ -47,29 +47,39 @@ app.get('/webhook', (req, res) => {
 });
 
 app.post('/webhook', (req, res) => {
-    // console.log(req);
     // console.log(res);
 
     let body = req.body;
 
+    console.log(body);
+
+    console.log(JSON.stringify(body));
+
+    // Possible values: "user", "application", "instagram" and other from FB APP Webhook config page AFTER SUBSCRIPTION (+VERIFY)
     if (body.object === 'page') {
 
         body.entry.forEach(function (entry) {
-            console.log('Webhook Entry', entry);
-            const { id: ID } = entry; // looks like Page ID (TestBot page ID).
+            // console.log('Webhook Entry', entry);
+            console.log('Webhook Entry ID', entry.id);
+            console.log('Webhook Entry Messaging Array', entry.messaging);
+
+            const { id: PAGE_ID } = entry; // "TestBot" page ID.
 
             // Gets the message. entry.messaging is an array, but
             // will only ever contain one message, so we get index 0
             let webhook_event = entry.messaging[0];
+            // console.log('Webhook Entry webhook_event', webhook_event);
             let { id:sender_psid } = webhook_event.sender;
-            // sender: { id: '1596800530437708' } - looks like TestBot itself from Facebook Messenger.
-            // sender: { id: '2011200215559139' } - looks like me (Andrii Lundiak)
+            // sender: { id: '15968***37708' } - TestBot FB Page ID.
+            // sender: { id: '20112***59139' } - Andrii Lundiak ID
             // sender => recipient
             // recipient => sender
             // etc
 
+            const userId = sender_psid; // Andrii Lundiak and other users/IDs (if POSTBACK)
+
             let { id:recipient_psid } = webhook_event.recipient;
-            const userId = recipient_psid; // TestBot page or IV-Bot app
+            // const userId = recipient_psid; // TestBot page or IV-Bot app
 
             if (webhook_event.message) {
                 // let sender_psid = webhook_event.sender.id;

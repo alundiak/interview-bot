@@ -100,15 +100,11 @@ module.exports = {
         this.dataFromBot['candidateEmail'] = email; // cell C4
 
         // TODO
-        if (name) {
-            this.dataFromBot['newSheetTitle'] = name; // cell B3, and Sheet/Tab Name
-        } else {
-            this.dataFromBot['newSheetTitle'] = email;
-        }
-
         if (phone_number) {
             this.dataFromBot['candidatePhone'] = phone_number; // cell B4
         }
+
+        this.dataFromBot['newSheetTitle'] = name || email || phone_number; // cell B3, and Sheet/Tab Name
         // TODO
     },
 

@@ -3,7 +3,13 @@
 //
 const request = require('request');
 
-const accessToken = process.env.FB_PAGE_ACCESS_TOKEN;
+// via IV-Bot FB APP + TestBot FB page
+// const accessToken = process.env.FB_PAGE_ACCESS_TOKEN;
+
+// via sms2chat FB APP + Moya Ukr Kompaniya FB page
+// const accessToken = process.env.SMS2CHAT_FB_APP_ACCESS_TOKEN;
+const accessToken = '';
+
 const baseURI = 'https://graph.facebook.com/v4.0/';
 
 /**
