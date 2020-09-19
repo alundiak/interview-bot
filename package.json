@@ -1,5 +1,5 @@
 {
-    "name": "IV-bot",
+    "name": "@lundiak/IV-bot-ms",
     "version": "1.0.0",
     "description": "Quiz-based Interview Bot.",
     "author": "Microsoft Bot Builder Yeoman Generator v4.0.10",

@@ -64,8 +64,8 @@ export class SlotFillingDialog extends Dialog {
         // here is place to decide if answer was CORRECT or not
         // And write int values[]
         values[slotName].abc = 'xyz';
-        // but it's kinda bad. If so, then thss "SlotFillingDialog" related Class will contain "business information".
-        // Besides, abc field is set on ALL results levels, even on slot. level. 
+        // but it's kinda bad. If so, then this "SlotFillingDialog" related Class will contain "business information".
+        // Besides, abc field is set on ALL results levels, even on slot. level.
         // So it's technically not correct
         // AL Approach 1.1
 
@@ -84,7 +84,7 @@ export class SlotFillingDialog extends Dialog {
 
         // console.log(Object.keys(values));
 
-        // const filledSlot = this.slots.filter(function(slot) { 
+        // const filledSlot = this.slots.filter(function(slot) {
         //     return Object.keys(values).indexOf(slot.name) > -1;
         // });
         // console.log('filledSlot', filledSlot/* filledSlot.length && filledSlot[0].options.expectedAnswer */);

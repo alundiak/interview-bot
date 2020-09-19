@@ -22,8 +22,8 @@ export class MyBot {
      * @param {ConversationState} conversationState A ConversationState object used to store dialog state.
      */
     constructor(conversationState, userState) {
-        // todo use userState to store user answers, 
-        // otherwise it will store/persisst in activeDialog state. not sure if it's OK.
+        // todo use userState to store user answers,
+        // otherwise it will store/persist in activeDialog state. not sure if it's OK.
 
         this.conversationState = conversationState;
 
@@ -79,7 +79,7 @@ export class MyBot {
         const jsValues = mainValues['js'].values;
         const reactValues = mainValues['react'].values;
 
-        // AL: Approach 1 - if I could pass exectedAnswer on SlotDetails level somehow and pass it to Dialog state
+        // AL: Approach 1 - if I could pass expectedAnswer on SlotDetails level somehow and pass it to Dialog state
         // for (const prop in jsObj) {
         //     if (jsObj.hasOwnProperty(prop)) {
         //         const element = jsObj[prop];
@@ -102,9 +102,9 @@ export class MyBot {
 
     /**
      * Taking answers and questions data, this helper function returns score in percentage.
-     * 
-     * @param {Object} answersObj 
-     * @param {Array} quizDataArray 
+     *
+     * @param {Object} answersObj
+     * @param {Array} quizDataArray
      */
     calculateScore(answersObj: object, quizDataArray: any) {
         let correctAnswersNumber = 0;

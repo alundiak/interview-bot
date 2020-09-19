@@ -1,4 +1,4 @@
-// Below code taken from 
+// Below code taken from
 // https://github.com/Microsoft/BotBuilder-Samples/blob/master/samples/javascript_nodejs/08.suggested-actions/bot.js
 const { ActivityTypes, MessageFactory } = require('botbuilder');
 
@@ -46,7 +46,7 @@ export class SuggestedActionsBot {
     async onTurn(turnContext) {
         //
         // https://github.com/Microsoft/BotBuilder-Samples/blob/master/samples/javascript_nodejs/51.cafe-bot/bot.js
-        // SWICTH example
+        // SWITCH example
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
 
@@ -63,7 +63,7 @@ export class SuggestedActionsBot {
 
                 // Majority of code/approach taken from here:
                 // https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-v4-state?view=azure-bot-service-4.0&tabs=javascript
-                // But there is adavanced way for sequential approach:
+                // But there is advanced way for sequential approach:
                 // https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-dialog-manage-conversation-flow?view=azure-bot-service-4.0&tabs=javascript
 
                 if (!userProfile.name) {
@@ -89,17 +89,13 @@ export class SuggestedActionsBot {
                         // if we have name, and quizType (userProfile.quizType), we start a quiz.
                         await this.startQuiz(turnContext, userProfile);
                     } else {
-
                         conversationData.promptedForQuizType = true;
                     }
 
                 } else {
-
                     // Add message details to the conversation data.
                     conversationData.timestamp = turnContext.activity.timestamp.toLocaleString();
                     conversationData.channelId = turnContext.activity.channelId;
-
-
                 }
 
                 // Update conversation state and save changes.
@@ -180,7 +176,7 @@ export class SuggestedActionsBot {
     }
 
     async runJSQuiz(turnContext) {
-        
+
         await this.sendQuestions(turnContext);
 
         const text = turnContext.activity.text;
