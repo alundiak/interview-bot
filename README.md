@@ -42,6 +42,25 @@ Bot will provide a quiz with questions. Interview Person should select `type` of
 - Read more about MS Bot Framework.
 - Bot uses Microsoft Application (id and password)
 
+## Local Development
+
+- [ngrok](https://ngrok.com/)
+
+```
+~/ngrok http 8989
+```
+
+Pros
+- Easy in setup
+Cons
+- url is expired next day, maybe faster. Time ago it wasn't so fast.
+
+
+- [localtunnel](https://github.com/localtunnel/localtunnel)
+
+```
+lt --port 8989
+```
 
 ## Deployment
 - Easy: Bot logic can be hosted in either local network as available host, or dedicated computer or any public free host. Not much of efforts needed, it's just quiz-like behavior.
@@ -54,6 +73,8 @@ Bot will provide a quiz with questions. Interview Person should select `type` of
 ## Other similar bots
 - https://angel.co/projects/584420-ibo-interview-bot?src=user_profile - IBo
 - https://www.linkedin.com/company/interviewbot/about/ - InterviewBot
+- https://www.facebook.com/pg/interviewbot/about - InterviewBot (Messenger). Last update 2013.
+- https://www.facebook.com/Speed-Recruiting-1803426429761460/ - looks like competitor in "name". Last Jun-2019.
 - https://hellotars.com/bot-examples/lead-generation/interview-bot/ - InterviewBot
 - https://www.kaggle.com/c/facebook-recruiting-iv-human-or-bot/ - kind of biding, prediction, etc.
 - https://imaginecup.microsoft.com/en-us/Team/dfc7f2f6-7358-4fa1-a756-6a2536270c91 - online InterviewBot
