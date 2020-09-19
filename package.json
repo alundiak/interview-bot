@@ -1,7 +1,7 @@
 {
     "name": "@lundiak/IV-bot-ms",
     "version": "1.0.0",
-    "description": "Quiz-based Interview Bot.",
+    "description": "Quiz-based Interview Microsoft Bot",
     "author": "Microsoft Bot Builder Yeoman Generator v4.0.10",
     "license": "MIT",
     "main": "./lib/index.js",

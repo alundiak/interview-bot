@@ -1,6 +1,6 @@
-# IV-bot
-Interview Bot, which maintains a simple quiz-like dialog for initial Candidate Interview.
-
+IV-bot v1.0
+===
+Interview Bot, which maintains a simple quiz-like dialog for initial Candidate Interview. Built with Microsoft Bot Framework using TypeScript. Requires Azure API and Bot Emulator.
 
 ## Name
 - IV?
